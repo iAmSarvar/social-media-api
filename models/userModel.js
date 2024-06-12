@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const userScheme = new mongoose.Schema(
   {
@@ -7,7 +8,7 @@ const userScheme = new mongoose.Schema(
       required: [true, "User must have a name!"],
       unique: true,
     },
-    emaill: {
+    email: {
       type: String,
       required: [true, "User must have an email!"],
       max: 50,
@@ -15,7 +16,7 @@ const userScheme = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [ture, "User must have a password!"],
+      required: [true, "User must have a password!"],
       min: 4,
     },
     profilePicture: {
@@ -42,6 +43,16 @@ const userScheme = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userScheme);
+// Hashing the password
+userScheme.pre("save", async function (next) {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+
+  this.password = hashedPassword;
+
+  next();
+});
+
+const User = mongoose.model("User ", userScheme);
 
 module.exports = User;
