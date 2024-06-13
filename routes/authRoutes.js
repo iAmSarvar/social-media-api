@@ -25,4 +25,26 @@ router.route("/register").post(async (req, res) => {
   }
 });
 
+router.route("/login").post(async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found!",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "logged in",
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      message: error.message,
+    });
+  }
+});
+
 module.exports = router;
