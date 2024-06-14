@@ -35,10 +35,21 @@ router.route("/login").post(async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      status: "success",
-      message: "logged in",
-    });
+    const isValid = await user.comparePasswords(req.body.password);
+
+    if (isValid) {
+      return res.status(200).json({
+        status: "success",
+        data: {
+          user,
+        },
+      });
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "wrong password",
+      });
+    }
   } catch (error) {
     res.status(400).json({
       status: "fail",
