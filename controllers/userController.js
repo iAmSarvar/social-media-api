@@ -63,7 +63,28 @@ const updateUser = async (req, res) => {
 };
 
 // Delete user
-const deleteUser = async (req, res) => {};
+const deleteUser = async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    try {
+      await User.findByIdAndDelete(req.params.id);
+
+      res.status(204).json({
+        status: "success",
+        data: null,
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  } else {
+    return res.status(403).json({
+      status: "fail",
+      message: "You can't delete this account!",
+    });
+  }
+};
 
 // Follow user
 const followUser = async (req, res) => {};
