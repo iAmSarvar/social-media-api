@@ -48,8 +48,8 @@ const login = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(400).json({
-      status: "fail",
+    res.status(500).json({
+      status: "error",
       message: error.message,
     });
   }
