@@ -123,15 +123,12 @@ const getPost = async (req, res) => {
 const getPosts = async (req, res) => {
   try {
     const currentUser = await User.findById(req.body.userId);
-    console.log(currentUser);
     const userPosts = await Post.find({ userId: currentUser._id });
     const friendPosts = await Promise.all(
       currentUser.followings.map((friendId) => {
         return Post.find({ userId: friendId });
       })
     );
-
-    // console.log(friendPosts);
 
     const allPost = userPosts.concat(...friendPosts);
 
