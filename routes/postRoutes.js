@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.route("/").post(postController.createPost);
 
+router.route("/timeline").get(postController.getPosts);
+
 router
   .route("/:id")
   .get(postController.getPost)
