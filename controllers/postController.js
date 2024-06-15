@@ -72,13 +72,53 @@ const deletePost = async (req, res) => {
   }
 };
 
-// Like post
-const likePost = async (req, res) => {};
+// Like or dislike post
+const likePost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post.likes.includes(req.body.userId)) {
+      await post.updateOne({ $push: { likes: req.body.userId } });
+
+      res.status(200).json({
+        status: "success",
+        message: "Liked a post",
+      });
+    } else {
+      await post.updateOne({ $pull: { likes: req.body.userId } });
+
+      res.status(200).json({
+        status: "success",
+        message: "disliked a post",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
 
 // Get a post
-const getPost = async (req, res) => {};
+const getPost = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
 
-// Get posts
+    res.status(200).json({
+      status: "success",
+      data: {
+        post,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+
+// Get postsq
 const getPosts = async (req, res) => {};
 
 module.exports = {

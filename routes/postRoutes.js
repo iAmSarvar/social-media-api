@@ -7,7 +7,10 @@ router.route("/").post(postController.createPost);
 
 router
   .route("/:id")
+  .get(postController.getPost)
   .patch(postController.updatePost)
   .delete(postController.deletePost);
+
+router.route("/:id/like").patch(postController.likePost);
 
 module.exports = router;
