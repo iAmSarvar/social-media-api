@@ -87,10 +87,72 @@ const deleteUser = async (req, res) => {
 };
 
 // Follow user
-const followUser = async (req, res) => {};
+const followUser = async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      if (!user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $push: { followers: req.body.userId } });
+        await currentUser.updateOne({ $push: { followings: req.params.id } });
+
+        res.status(200).json({
+          status: "success",
+          message: `You are now following ${user.username}`,
+        });
+      } else {
+        res.status(400).json({
+          status: "fail",
+          message: "You are already following this user!",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  } else {
+    return res.status(400).json({
+      status: "fail",
+      message: "You can't follow yourself!",
+    });
+  }
+};
 
 // Unfollow user
-const unfollowUser = async (req, res) => {};
+const unfollowUser = async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id);
+      const currentUser = await User.findById(req.body.userId);
+      if (user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $pull: { followers: req.body.userId } });
+        await currentUser.updateOne({ $pull: { followings: req.params.id } });
+
+        res.status(200).json({
+          status: "success",
+          message: `You are now unfollowing ${user.username}`,
+        });
+      } else {
+        res.status(400).json({
+          status: "fail",
+          message: "You are already unfollowing this user!",
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        message: error.message,
+      });
+    }
+  } else {
+    return res.status(400).json({
+      status: "fail",
+      message: "You can't unfollow yourself!",
+    });
+  }
+};
 
 module.exports = {
   updateUser,
